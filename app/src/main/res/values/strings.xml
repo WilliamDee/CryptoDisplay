@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CryptoCharts</string>
+    <string name="app_title">Crypto Charts</string>
+    <string name="author_name">William Deng</string>
+    <string name="coin_name_placeholder">{Coin Name}</string>
+    <string name="coin_price_placeholder">{Price}</string>
+</resources>
