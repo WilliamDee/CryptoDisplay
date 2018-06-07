@@ -10,7 +10,6 @@ import com.william.cryptocharts.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

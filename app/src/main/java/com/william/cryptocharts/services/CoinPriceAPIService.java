@@ -1,6 +1,5 @@
 package com.william.cryptocharts.services;
 
-import com.william.cryptocharts.database.CoinListResponse;
 import com.william.cryptocharts.database.PriceResponse;
 
 import retrofit2.Call;
