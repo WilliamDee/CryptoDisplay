@@ -48,10 +48,10 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
     }
 
     @Override
-    public void onBindViewHolder(final CoinAdapter.CoinViewHolder holder, int position) {
-        final String coinName = coinList.get(holder.getAdapterPosition()).getCoinName();
-        final String coinPrice = coinList.get(holder.getAdapterPosition()).getCoinPrice();
-        Boolean isFavourite = coinList.get(holder.getAdapterPosition()).getFavourite();
+    public void onBindViewHolder(final CoinAdapter.CoinViewHolder holder, final int position) {
+        final String coinName = coinList.get(position).getCoinName();
+        final String coinPrice = coinList.get(position).getCoinPrice();
+        Boolean isFavourite = coinList.get(position).getFavourite();
 
         holder.coinName.setText(coinName);
         if(isFavourite == null || !isFavourite){
@@ -63,7 +63,7 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
         }
 
         if (coinPrice == null){
-            updateCoinPrice(holder, coinName);
+            updateCoinPrice(holder, coinName, position);
         } else {
             holder.coinPrice.setText(String.format("$%s",coinPrice));
         }
@@ -72,9 +72,9 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
             @Override
             public void onClick(View v) {
                 if(v.isSelected()){
-                        removeFromFavourites(holder, coinName);
+                        removeFromFavourites(holder, coinName, position);
                 } else {
-                    addToFavourites(holder);
+                    addToFavourites(holder, position);
                 }
             }
         });
@@ -87,13 +87,13 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
         return coinPriceApi;
     }
 
-    private void updateCoinPrice(final CoinViewHolder holder, final String coinName){
+    private void updateCoinPrice(final CoinViewHolder holder, final String coinName, final int position){
         Call<PriceResponse> call = getCoinPriceAPIService().getPriceOfCoin(coinName, PriceResponse.Currency);
         call.enqueue(new Callback<PriceResponse>() {
             @Override
             public void onResponse(Call<PriceResponse> call, Response<PriceResponse> response) {
                 String retreivedCoinPrice = response.body().getCoinPrice();
-                coinList.get(holder.getAdapterPosition()).setCoinPrice(retreivedCoinPrice);
+                coinList.get(position).setCoinPrice(retreivedCoinPrice);
                 Log.v("PRICE", response.body().toString());
 
                 if(response.body().getCoinPrice() != null){
@@ -108,12 +108,11 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
         });
     }
 
-    private void addToFavourites(CoinViewHolder holder){
-        int pos = holder.getAdapterPosition();
-        Coin favCoin = coinList.get(pos);
+    private void addToFavourites(CoinViewHolder holder, int position){
+        Coin favCoin = coinList.get(position);
         favCoin.setFavourite(true);
-        coinList.remove(pos);
-        notifyItemRemoved(pos);
+        coinList.remove(position);
+        notifyItemRemoved(position);
 
         numOfFavouriteCoins++;
         coinList.add(0 , favCoin);
@@ -123,12 +122,11 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
         AppDatabase.getAppDatabase(mContext).coinDao().replace(coinList.get(0));
     }
 
-    private void removeFromFavourites(CoinViewHolder holder, String coinName){
-        int pos = holder.getAdapterPosition();
-        Coin unFavCoin = coinList.get(pos);
+    private void removeFromFavourites(CoinViewHolder holder, String coinName, int position){
+        Coin unFavCoin = coinList.get(position);
         unFavCoin.setFavourite(false);
-        coinList.remove(pos);
-        notifyItemRemoved(pos);
+        coinList.remove(position);
+        notifyItemRemoved(position);
 
         numOfFavouriteCoins--;
         coinList.add(numOfFavouriteCoins, unFavCoin);
